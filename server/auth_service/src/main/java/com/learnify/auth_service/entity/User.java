@@ -1,10 +1,18 @@
 package com.learnify.auth_service.entity;
 
-import jakarta.persistence.*;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,7 +21,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     private String id;
 
@@ -35,7 +43,7 @@ public class User {
     @Column(name = "verified", nullable = false)
     private boolean verified = false;
 
-    @Column(name = "verification_token")
+    @Column(name = "verification_token", updatable = false)
     private String verificationToken;
 
     @Column(name = "token_expiry")
@@ -47,5 +55,16 @@ public class User {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.generateVerificationToken();
+    }
+
+    private void generateVerificationToken() {
+
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[32];
+        secureRandom.nextBytes(randomBytes);
+        this.verificationToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+
+        this.tokenExpiry = LocalDateTime.now().plusHours(24);
     }
 }

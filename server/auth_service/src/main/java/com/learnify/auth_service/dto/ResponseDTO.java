@@ -1,27 +1,34 @@
 package com.learnify.auth_service.dto;
 
-public class ResponseDTO {
-    private int status;
-    private String message;
+import org.springframework.http.HttpStatus;
 
-    public ResponseDTO(int status, String message) {
-        this.status = status;
-        this.message = message;
+public class ResponseDTO<T> {
+
+    private HttpStatus status;
+    private T data;
+
+    public ResponseDTO() {
     }
 
-    public int getStatus() {
+    public ResponseDTO(HttpStatus status, T data) {
+        this.status = status;
+        this.data = data;
+    }
+
+    public HttpStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(HttpStatus status) {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public T getData() {
+        return data;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setData(T data) {
+        this.data = data;
     }
+
 }

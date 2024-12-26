@@ -2,6 +2,7 @@ package com.learnify.auth_service.config;
 
 import java.io.IOException;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learnify.auth_service.dto.ResponseDTO;
+import com.learnify.auth_service.dto.ErrorResponseDTO;
 import com.learnify.auth_service.service.UserService;
 import com.learnify.auth_service.utils.JwtUtils;
 
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
+    @Lazy
     public JwtAuthenticationFilter(JwtUtils jwtUtils, UserService userService) {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
@@ -36,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (requestURI.equals("/login") || requestURI.equals("/register")) {
+        if (requestURI.equals("/api/auth/login") || requestURI.equals("/api/auth/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -65,7 +67,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             username = jwtUtils.extractUsername(token);
         } catch (Exception e) {
-            e.printStackTrace();
             sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid token / Token expired");
             return;
         }
@@ -88,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
-        ResponseDTO responseDTO = new ResponseDTO(status, message);
+        ErrorResponseDTO responseDTO = new ErrorResponseDTO(status, message);
         response.setStatus(status);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();
