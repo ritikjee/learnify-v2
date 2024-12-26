@@ -19,16 +19,18 @@ import com.learnify.auth_service.utils.JwtUtils;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class UserController {
 
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserService userService, JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
+    public UserController(UserService userService, JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
@@ -49,7 +51,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
-        System.out.println(user.getEmail() + " " + user.getPassword());
+
         try {
 
             Authentication authentication = authenticationManager.authenticate(
@@ -62,14 +64,37 @@ public class AuthController {
             cookie.setHttpOnly(true);
             cookie.setMaxAge(60 * 60 * 10);
             cookie.setPath("/");
-            cookie.setSecure(false);
+            cookie.setSecure(true);
 
             response.addCookie(cookie);
 
             return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK, "Login successful"));
         } catch (Exception e) {
+
             return ResponseEntity.badRequest()
                     .body(new ErrorResponseDTO(HttpStatus.UNAUTHORIZED.value(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/verify-account")
+    public ResponseEntity<?> getMethodName(@RequestParam String email, @RequestParam String token) {
+        try {
+            userService.verifyUser(email, token);
+            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK, "User verified successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/generate-token")
+    public ResponseEntity<?> generateNewToken(@RequestParam String email) {
+        try {
+            String token = userService.generateVerificationToken(email);
+            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK, token));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
     }
 

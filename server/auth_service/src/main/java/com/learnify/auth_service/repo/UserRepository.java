@@ -8,6 +8,8 @@ import com.learnify.auth_service.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
+    User findByEmail(String email);
+
     User findByEmailAndVerified(String email, boolean verified);
 
 }

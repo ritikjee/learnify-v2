@@ -1,6 +1,7 @@
 package com.learnify.auth_service.config;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.learnify.auth_service.constants.SecurityConstants;
 import com.learnify.auth_service.dto.ErrorResponseDTO;
 import com.learnify.auth_service.service.UserService;
 import com.learnify.auth_service.utils.JwtUtils;
@@ -38,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (requestURI.equals("/api/auth/login") || requestURI.equals("/api/auth/register")) {
+        if (Arrays.asList(SecurityConstants.PUBLIC_ENDPOINTS).contains(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -43,7 +43,7 @@ public class User {
     @Column(name = "verified", nullable = false)
     private boolean verified = false;
 
-    @Column(name = "verification_token", updatable = false)
+    @Column(name = "verification_token")
     private String verificationToken;
 
     @Column(name = "token_expiry")
@@ -58,7 +58,7 @@ public class User {
         this.generateVerificationToken();
     }
 
-    private void generateVerificationToken() {
+    public String generateVerificationToken() {
 
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[32];
@@ -66,5 +66,7 @@ public class User {
         this.verificationToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
 
         this.tokenExpiry = LocalDateTime.now().plusHours(24);
+
+        return this.verificationToken;
     }
 }
