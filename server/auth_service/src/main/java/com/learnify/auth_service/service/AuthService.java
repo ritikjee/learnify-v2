@@ -25,7 +25,7 @@ public class AuthService implements UserDetailsService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Cacheable(value = "users", key = "#username", unless = "#result == null")
+    @Cacheable(value = "users", key = "#username")
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -40,7 +40,12 @@ public class AuthService implements UserDetailsService {
         return userBuilder.build();
     }
 
-    @Cacheable(value = "users", key = "#user.email", unless = "#result == null")
+    @Cacheable(value = "users", key = "#email")
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Cacheable(value = "users", key = "#user.email")
     public User register(User user) {
         String email = user.getEmail();
         if (email == null || email.isEmpty() || !email.contains("@")) {
