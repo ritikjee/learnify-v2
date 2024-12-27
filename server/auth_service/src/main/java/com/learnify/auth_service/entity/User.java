@@ -1,8 +1,7 @@
 package com.learnify.auth_service.entity;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,21 +51,25 @@ public class User {
     @Column(name = "image")
     private String image;
 
+    @Column(name = "session_id", nullable = false)
+    private String sessionId;
+
+    @Column(name = "forgot_password_token")
+    private String forgotPasswordToken;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.generateVerificationToken();
+        this.verificationToken = this.generateVerificationToken();
+        this.sessionId = this.generateSessionId();
+
     }
 
     public String generateVerificationToken() {
+        return UUID.randomUUID().toString();
+    }
 
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[32];
-        secureRandom.nextBytes(randomBytes);
-        this.verificationToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
-
-        this.tokenExpiry = LocalDateTime.now().plusHours(24);
-
-        return this.verificationToken;
+    public String generateSessionId() {
+        return UUID.randomUUID().toString();
     }
 }

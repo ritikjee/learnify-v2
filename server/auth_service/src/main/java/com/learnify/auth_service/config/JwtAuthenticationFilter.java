@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnify.auth_service.constants.SecurityConstants;
 import com.learnify.auth_service.dto.ErrorResponseDTO;
-import com.learnify.auth_service.service.UserService;
+import com.learnify.auth_service.service.AuthService;
 import com.learnify.auth_service.utils.JwtUtils;
 
 import jakarta.servlet.FilterChain;
@@ -28,10 +28,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-    private final UserService userService;
+    private final AuthService userService;
 
     @Lazy
-    public JwtAuthenticationFilter(JwtUtils jwtUtils, UserService userService) {
+    public JwtAuthenticationFilter(JwtUtils jwtUtils, AuthService userService) {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
     }
