@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getAuthenticatedUser() {
-        System.out.println("====================================================================");
+
         try {
             UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                     .getPrincipal();
@@ -47,7 +47,7 @@ public class UserController {
             userDTO.setLastname(user.getLastname());
             userDTO.setImage(user.getImage());
 
-            System.out.println("============================2================================");
+
 
             return ResponseEntity.ok(new ResponseDTO<UserDTO>(HttpStatus.OK, userDTO));
 
