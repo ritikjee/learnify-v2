@@ -25,7 +25,7 @@ public class AuthService implements UserDetailsService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Cacheable(value = "users", key = "#username")
+    @Cacheable(value = "users-details", key = "#username")
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

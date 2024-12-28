@@ -1,4 +1,4 @@
-package com.learnify.auth_service.dto;
+package com.learnify.api_gateway.dto;
 
 import lombok.Getter;
 import lombok.Setter;

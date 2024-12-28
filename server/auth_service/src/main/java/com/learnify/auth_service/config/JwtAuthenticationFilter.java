@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnify.auth_service.constants.SecurityConstants;
 import com.learnify.auth_service.dto.ErrorResponseDTO;
-import com.learnify.auth_service.entity.User;
 import com.learnify.auth_service.service.AuthService;
 import com.learnify.auth_service.utils.JwtUtils;
 
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        User userDetails = userService.getUserByEmail(username);
+        UserDetails userDetails = userService.loadUserByUsername(username);
 
         if (userDetails == null) {
             sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid token / Token expired");
