@@ -25,4 +25,11 @@ public class Routes {
                 .route(RequestPredicates.path("/api/user/**"), HandlerFunctions.http("http://localhost:8081"))
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> courseRouterFunction() {
+        return GatewayRouterFunctions.route("group_service")
+                .route(RequestPredicates.path("/api/group/**"), HandlerFunctions.http("http://localhost:8082"))
+                .build();
+    }
 }

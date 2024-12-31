@@ -16,12 +16,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "groups")
 public class Group {
 
     @Id
@@ -35,14 +37,15 @@ public class Group {
     private String category;
 
     private String description;
-    private String[] thumbnail;
-    private String[] gallery;
+    private List<String> thumbnail;
+    private List<String> gallery;
 
     private String jsonDescription;
     private String htmlDescription;
     private String icon;
 
-    private Members[] member;
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Members> members;
 
     @Enumerated(EnumType.STRING)
     private GroupPrivacy privacy = GroupPrivacy.PRIVATE;

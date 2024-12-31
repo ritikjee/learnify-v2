@@ -30,7 +30,6 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         String requestURI = request.getRequestURI();
 
-        // Allow public routes under /api/auth/** to bypass interception
         if (requestURI.startsWith("/api/auth/")) {
             return true;
         }
