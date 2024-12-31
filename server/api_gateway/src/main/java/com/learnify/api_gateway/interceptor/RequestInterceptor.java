@@ -62,7 +62,6 @@ public class RequestInterceptor implements HandlerInterceptor {
                 return false;
             }
 
-            // Add user object to request attributes for downstream services
             request.setAttribute("authenticatedUser", user);
         } catch (Exception e) {
             sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Not authorized: " + e.getMessage());
