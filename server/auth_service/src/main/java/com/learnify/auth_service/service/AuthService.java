@@ -1,6 +1,7 @@
 package com.learnify.auth_service.service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.learnify.auth_service.config.RabbitMQProducer;
 import com.learnify.auth_service.entity.User;
 import com.learnify.auth_service.repo.UserRepository;
 
@@ -19,10 +21,13 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RabbitMQProducer rabbitMQProducer;
 
-    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+            RabbitMQProducer rabbitMQProducer) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.rabbitMQProducer = rabbitMQProducer;
     }
 
     @Cacheable(value = "users-details", key = "#username")
@@ -62,7 +67,14 @@ public class AuthService implements UserDetailsService {
             throw new RuntimeException("User with email already exists");
         }
 
+        String verificationToken = UUID.randomUUID().toString();
+
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setVerificationToken(verificationToken);
+
+        // TODO : Send email verification token
+
+        // rabbitMQProducer.sendMessage(user.getEmail());
         return userRepository.save(user);
     }
 
@@ -97,7 +109,7 @@ public class AuthService implements UserDetailsService {
             throw new RuntimeException("Token already generated");
         }
 
-        String token = user.generateVerificationToken();
+        String token = UUID.randomUUID().toString();
         userRepository.save(user);
 
         return token;

@@ -60,16 +60,8 @@ public class User {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.verificationToken = this.generateVerificationToken();
-        this.sessionId = this.generateSessionId();
+        this.sessionId = UUID.randomUUID().toString();
 
     }
 
-    public String generateVerificationToken() {
-        return UUID.randomUUID().toString();
-    }
-
-    public String generateSessionId() {
-        return UUID.randomUUID().toString();
-    }
 }

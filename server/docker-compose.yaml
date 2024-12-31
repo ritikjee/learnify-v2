@@ -42,6 +42,16 @@ services:
       - postgres_network
     restart: unless-stopped
 
+  rabbitmq:
+    container_name: rabbitmq_container
+    image: rabbitmq:4.0-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - postgres_network
+    restart: unless-stopped
+
 networks:
   postgres_network:
     driver: bridge
